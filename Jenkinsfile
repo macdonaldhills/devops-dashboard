@@ -19,7 +19,12 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t chibi7/devops-dashboard:latest .'
+                sh '''
+                    docker build \
+                        -t chibi7/devops-dashboard:latest \
+                        -t chibi7/devops-dashboard:${BUILD_NUMBER} \
+                        .
+                '''
             }
         }
 
@@ -33,6 +38,7 @@ pipeline {
                     sh '''
                         echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
                         docker push chibi7/devops-dashboard:latest
+                        docker push chibi7/devops-dashboard:${BUILD_NUMBER}
                         docker logout
                     '''
                 }
@@ -43,11 +49,11 @@ pipeline {
             steps {
                 sh '''
                     docker rm -f devops-dashboard-test || true
-                    docker pull chibi7/devops-dashboard:latest
+                    docker pull chibi7/devops-dashboard:${BUILD_NUMBER}
                     docker run -d \
                         --name devops-dashboard-test \
                         --network jenkins \
-                        chibi7/devops-dashboard:latest
+                        chibi7/devops-dashboard:${BUILD_NUMBER}
                 '''
             }
         }
@@ -68,11 +74,11 @@ pipeline {
         }
 
         success {
-            echo 'DevOps Dashboard pipeline completed successfully!'
+            echo "DevOps Dashboard build ${BUILD_NUMBER} completed successfully!"
         }
 
         failure {
-            echo 'DevOps Dashboard pipeline failed.'
+            echo "DevOps Dashboard build ${BUILD_NUMBER} failed."
         }
     }
 }

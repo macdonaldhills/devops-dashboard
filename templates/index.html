@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div>
+            <h1>DEVOPS DASHBOARD</h1>
+            <p>Infrastructure & Deployment Monitor</p>
+        </div>
+
+        <div class="status-badge">
+            <span class="status-dot"></span>
+            SYSTEM ONLINE
+        </div>
+    </header>
+
+
+    <main class="container">
+
+        <section class="hero">
+            <div>
+                <p class="eyebrow">DEPLOYMENT OVERVIEW</p>
+                <h2>Application Infrastructure</h2>
+                <p>
+                    Monitor the current state of the application,
+                    container environment, and CI/CD pipeline.
+                </p>
+            </div>
+        </section>
+
+
+        <section class="cards">
+
+            <div class="card">
+                <div class="card-icon">●</div>
+                <p class="card-label">APPLICATION</p>
+                <h3>Online</h3>
+                <span class="card-status">Healthy</span>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">◆</div>
+                <p class="card-label">CONTAINER</p>
+                <h3>Docker</h3>
+                <span class="card-status">Running</span>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">↻</div>
+                <p class="card-label">CI/CD PIPELINE</p>
+                <h3>Jenkins</h3>
+                <span class="card-status">Configured</span>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">◇</div>
+                <p class="card-label">ENVIRONMENT</p>
+                <h3>Development</h3>
+                <span class="card-status">Active</span>
+            </div>
+
+        </section>
+
+
+        <section class="deployment">
+
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">LATEST DEPLOYMENT</p>
+                    <h2>Deployment #001</h2>
+                </div>
+
+                <span class="success-badge">SUCCESSFUL</span>
+            </div>
+
+            <div class="deployment-grid">
+
+                <div>
+                    <span>PIPELINE</span>
+                    <strong>Jenkins CI/CD</strong>
+                </div>
+
+                <div>
+                    <span>CONTAINER</span>
+                    <strong>Docker</strong>
+                </div>
+
+                <div>
+                    <span>APPLICATION</span>
+                    <strong>Flask</strong>
+                </div>
+
+                <div>
+                    <span>STATUS</span>
+                    <strong>Healthy</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="health">
+
+            <div>
+                <p class="eyebrow">SYSTEM HEALTH</p>
+                <h2>All systems operational</h2>
+            </div>
+
+            <div class="health-indicator">
+                <span class="status-dot"></span>
+                HEALTHY
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+        <p>DevOps Dashboard • Flask • Docker • Jenkins</p>
+    </footer>
+
+</body>
+</html>

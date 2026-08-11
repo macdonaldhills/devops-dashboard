@@ -39,10 +39,11 @@ pipeline {
             }
         }
 
-        stage('Run Container') {
+        stage('Deploy') {
             steps {
                 sh '''
                     docker rm -f devops-dashboard-test || true
+                    docker pull chibi7/devops-dashboard:latest
                     docker run -d \
                         --name devops-dashboard-test \
                         --network jenkins \

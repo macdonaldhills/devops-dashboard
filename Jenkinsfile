@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     stages {
-
         stage('Checkout') {
             steps {
                 checkout scm
@@ -10,12 +9,12 @@ pipeline {
         }
 
         stage('Test') {
-    steps {
-        sh 'python3 -m venv venv'
-        sh 'venv/bin/pip install -r requirements.txt'
-        sh 'venv/bin/pytest'
-    }
-}
+            steps {
+                sh 'python3 -m venv venv'
+                sh 'venv/bin/pip install -r requirements.txt'
+                sh 'venv/bin/pytest'
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
@@ -29,7 +28,7 @@ pipeline {
                     docker rm -f devops-dashboard-test || true
                     docker run -d \
                         --name devops-dashboard-test \
-                        -p 5001:5000 \
+                        --network jenkins \
                         devops-dashboard:jenkins
                 '''
             }
@@ -39,7 +38,7 @@ pipeline {
             steps {
                 sh '''
                     sleep 5
-                    curl -f http://localhost:5001/health
+                    curl -f http://devops-dashboard-test:5000/health
                 '''
             }
         }

@@ -4,6 +4,10 @@ A beginner-friendly DevOps dashboard built with Python, Flask, HTML, CSS, and Do
 
 The application provides a modern dashboard interface with application health monitoring and is containerized using Docker.
 
+![DevOps Dashboard](screenshots/dashboard.png)
+
+![Docker Container Health](screenshots/docker-health.png)
+
 ## Features
 
 - Modern DevOps dashboard interface

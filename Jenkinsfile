@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -18,7 +19,23 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t devops-dashboard:jenkins .'
+                sh 'docker build -t chibi7/devops-dashboard:latest .'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USERNAME',
+                    passwordVariable: 'DOCKER_PASSWORD'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+                        docker push chibi7/devops-dashboard:latest
+                        docker logout
+                    '''
+                }
             }
         }
 
@@ -29,7 +46,7 @@ pipeline {
                     docker run -d \
                         --name devops-dashboard-test \
                         --network jenkins \
-                        devops-dashboard:jenkins
+                        chibi7/devops-dashboard:latest
                 '''
             }
         }

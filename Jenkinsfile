@@ -10,10 +10,11 @@ pipeline {
         }
 
         stage('Test') {
-            steps {
-                sh 'pytest'
-            }
-        }
+    steps {
+        sh 'pip install -r requirements.txt'
+        sh 'pytest'
+    }
+}
 
         stage('Build Docker Image') {
             steps {

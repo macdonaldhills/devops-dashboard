@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_IMAGE = 'chibi7/devops-dashboard'
+    }
+
     stages {
 
         stage('Checkout') {
@@ -21,8 +25,8 @@ pipeline {
             steps {
                 sh '''
                     docker build \
-                        -t chibi7/devops-dashboard:latest \
-                        -t chibi7/devops-dashboard:${BUILD_NUMBER} \
+                        -t ${DOCKER_IMAGE}:latest \
+                        -t ${DOCKER_IMAGE}:${BUILD_NUMBER} \
                         .
                 '''
             }
@@ -37,44 +41,49 @@ pipeline {
                 )]) {
                     sh '''
                         echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-                        docker push chibi7/devops-dashboard:latest
-                        docker push chibi7/devops-dashboard:${BUILD_NUMBER}
+                        docker push ${DOCKER_IMAGE}:latest
+                        docker push ${DOCKER_IMAGE}:${BUILD_NUMBER}
                         docker logout
                     '''
                 }
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy to Kubernetes') {
             steps {
                 sh '''
-                    docker rm -f devops-dashboard-test || true
-                    docker pull chibi7/devops-dashboard:${BUILD_NUMBER}
-                    docker run -d \
-                        --name devops-dashboard-test \
-                        --network jenkins \
-                        chibi7/devops-dashboard:${BUILD_NUMBER}
+                    kubectl apply -f k8s/deployment.yaml
+                    kubectl apply -f k8s/service.yaml
+
+                    kubectl set image deployment/devops-dashboard \
+                        devops-dashboard=${DOCKER_IMAGE}:${BUILD_NUMBER}
+
+                    kubectl rollout status deployment/devops-dashboard \
+                        --timeout=120s
                 '''
             }
         }
 
-        stage('Health Check') {
+        stage('Kubernetes Health Check') {
             steps {
                 sh '''
-                    sleep 5
-                    curl -f http://devops-dashboard-test:5000/health
+                    kubectl wait \
+                        --for=condition=available \
+                        deployment/devops-dashboard \
+                        --timeout=120s
+
+                    kubectl get pods
+                    kubectl get service devops-dashboard
+
+                    echo "Kubernetes deployment is healthy."
                 '''
             }
         }
     }
 
     post {
-        always {
-            sh 'docker rm -f devops-dashboard-test || true'
-        }
-
         success {
-            echo "DevOps Dashboard build ${BUILD_NUMBER} completed successfully!"
+            echo "DevOps Dashboard build ${BUILD_NUMBER} deployed successfully to Kubernetes!"
         }
 
         failure {
